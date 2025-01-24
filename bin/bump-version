@@ -1,30 +1,11 @@
 #!/bin/bash
 
-usage() { echo "Usage: $0 -p [major | minor | patch]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [ major | minor | patch ]" 1>&2; exit 1; }
 
-while getopts "p:" o; do
-  case "${o}" in
-    p)
-      patch_level=${OPTARG}
-      (( patch_level == 'major' || patch_level == 'minor' || patch_level == 'patch'))
-      ;;
-    *)
-      usage
-      ;;
-  esac
-done
-
-echo "$patch_level"
-
-if [[ -z "${patch_level}" ]]; then
+version_type=$1
+if [ "$version_type" == "major" ] || [ "$version_type" == "minor" ] || [ "$version_type" == "patch" ]; then
+  new_version=$(npm version "$version_type" --no-git-tag-version) || exit
+  echo "$new_version"
+else
   usage
 fi
-
-new_version=$(npm version "${patch_level}" --no-git-tag-version)
-git checkout -b "${new_version}"-release-notes
-sed -i.bak "s|dependabot/fetch-metadata@v[0-9.]*|dependabot/fetch-metadata@${new_version}|g" "README.md"
-rm README.md.bak
-git add package.json package-lock.json README.md
-git commit -m "${new_version}"
-
-echo "Branch prepared for ${new_version}"

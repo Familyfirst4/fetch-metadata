@@ -15,7 +15,11 @@ inputs:
     default: ${{ github.token }}
   skip-commit-verification:
     type: boolean
-    description: 'If true, the action will not expect Dependabot commits to be verified. This should be set as `true` in GHES environments.'
+    description: 'If true, the action will not expect Dependabot commits to be verified. This should be set as `true` in GHES environments'
+    default: false
+  skip-verification:
+    type: boolean
+    description: 'If true, the action will not validate the user or the commit verification status'
     default: false
 outputs:
   dependency-names:
@@ -44,6 +48,10 @@ outputs:
     description: 'If this PR is associated with a security alert and `alert-lookup` is `true`, this contains the CVSS value of that alert (otherwise it contains 0).'
   compatibility-score:
     description: 'If this PR has a known compatibility score and `compat-lookup` is `true`, this contains the compatibility score (otherwise it contains 0).'
+  maintainer-changes:
+    description: 'Whether or not the the body of this PR contains the phrase "Maintainer changes" which is an indicator of whether or not any maintainers have changed.'
+  dependency-group:
+    description: 'The dependency group that the PR is associated with (otherwise it is an empty string).'
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'

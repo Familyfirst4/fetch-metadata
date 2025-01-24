@@ -7,7 +7,7 @@ export function parseNwo (nwo: string): {owner: string; repo: string} {
     throw new Error(`'${nwo}' does not appear to be a valid repository NWO`)
   }
 
-  return { owner: owner, repo: name }
+  return { owner, repo: name }
 }
 
 export interface branchNames {
@@ -18,4 +18,9 @@ export interface branchNames {
 export function getBranchNames (context: Context): branchNames {
   const { pull_request: pr } = context.payload
   return { headName: pr?.head.ref || '', baseName: pr?.base.ref }
+}
+
+export function getBody (context: Context): string {
+  const { pull_request: pr } = context.payload
+  return pr?.body || ''
 }
